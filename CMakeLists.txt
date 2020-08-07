@@ -90,3 +90,7 @@ add_subdirectory(dep)
 
 # add core sources
 add_subdirectory(src)
+
+find_package(LibCDS CONFIG REQUIRED)
+
+
