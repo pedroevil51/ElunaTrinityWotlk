@@ -311,6 +311,7 @@ void World::AddSession(WorldSession* s)
     addSessQueue.add(s);
 }
 
+
 void World::AddSession_(WorldSession* s)
 {
     ASSERT(s);
@@ -685,6 +686,7 @@ void World::LoadConfigSettings(bool reload)
     m_int_configs[CONFIG_PRESERVE_CUSTOM_CHANNEL_DURATION] = sConfigMgr->GetIntDefault("PreserveCustomChannelDuration", 14);
     m_int_configs[CONFIG_PRESERVE_CUSTOM_CHANNEL_INTERVAL] = sConfigMgr->GetIntDefault("PreserveCustomChannelInterval", 5);
     m_bool_configs[CONFIG_GRID_UNLOAD] = sConfigMgr->GetBoolDefault("GridUnload", true);
+    m_int_configs[CONFIG_MAP_NUMTHREADS] = sConfigMgr->GetIntDefault("CoresPorMapa", 2);
     m_bool_configs[CONFIG_BASEMAP_LOAD_GRIDS] = sConfigMgr->GetBoolDefault("BaseMapLoadAllGrids", false);
     if (m_bool_configs[CONFIG_BASEMAP_LOAD_GRIDS] && m_bool_configs[CONFIG_GRID_UNLOAD])
     {
@@ -1758,11 +1760,12 @@ void World::SetInitialWorldSettings()
     TC_LOG_INFO("server.loading", "Loading Creature Model Based Info Data...");
     sObjectMgr->LoadCreatureModelInfo();
 
-    TC_LOG_INFO("server.loading", "Loading Creature templates...");
-    sObjectMgr->LoadCreatureTemplates();
 
-    TC_LOG_INFO("server.loading", "Loading Equipment templates...");           // must be after LoadCreatureTemplates
-    sObjectMgr->LoadEquipmentTemplates();
+        TC_LOG_INFO("server.loading", "Loading Creature templates...");
+        sObjectMgr->LoadCreatureTemplates();
+
+        TC_LOG_INFO("server.loading", "Loading Equipment templates...");           // must be after LoadCreatureTemplates
+        sObjectMgr->LoadEquipmentTemplates();
 
     TC_LOG_INFO("server.loading", "Loading Creature template addons...");
     sObjectMgr->LoadCreatureTemplateAddons();
@@ -2048,10 +2051,15 @@ void World::SetInitialWorldSettings()
     TC_LOG_INFO("server.loading", "Loading Autobroadcasts...");
     LoadAutobroadcasts();
 
-    ///- Load and initialize scripts
-    sObjectMgr->LoadSpellScripts();                              // must be after load Creature/Gameobject(Template/Data)
-    sObjectMgr->LoadEventScripts();                              // must be after load Creature/Gameobject(Template/Data)
-    sObjectMgr->LoadWaypointScripts();
+
+        ///- Load and initialize scripts
+        sObjectMgr->LoadSpellScripts();                              // must be after load Creature/Gameobject(Template/Data)
+        sObjectMgr->LoadEventScripts();                              // must be after load Creature/Gameobject(Template/Data)
+        sObjectMgr->LoadWaypointScripts();
+        // - Load More Shit
+        TC_LOG_INFO("server.loading", "Loading spell script names...");
+        sObjectMgr->LoadSpellScriptNames();
+
 
     TC_LOG_INFO("server.loading", "Loading spell script names...");
     sObjectMgr->LoadSpellScriptNames();
@@ -2193,26 +2201,13 @@ void World::SetInitialWorldSettings()
     TC_LOG_INFO("server.loading", "Calculate guild limitation(s) reset time...");
     InitGuildResetTime();
 
+
 #ifdef ELUNA
     ///- Run eluna scripts.
     // in multithread foreach: run scripts
     sEluna->RunScripts();
     sEluna->OnConfigLoad(false); // Must be done after Eluna is initialized and scripts have run.
 #endif
-
-    // Preload all cells, if required for the base maps
-    if (sWorld->getBoolConfig(CONFIG_BASEMAP_LOAD_GRIDS))
-    {
-        sMapMgr->DoForAllMaps([](Map* map)
-        {
-            if (!map->Instanceable())
-            {
-                TC_LOG_INFO("server.loading", "Pre-loading base map data for map %u", map->GetId());
-                map->LoadAllCells();
-            }
-        });
-    }
-
     uint32 startupDuration = GetMSTimeDiffToNow(startupBegin);
 
     TC_LOG_INFO("server.worldserver", "World initialized in %u minutes %u seconds", (startupDuration / 60000), ((startupDuration % 60000) / 1000));

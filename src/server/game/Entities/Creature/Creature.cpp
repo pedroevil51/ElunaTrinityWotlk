@@ -55,6 +55,10 @@
 #include "LuaEngine.h"
 #endif
 #include <G3D/g3dmath.h>
+#include <iostream>
+#include <vector>
+#include <thread>
+
 
 std::string CreatureMovementData::ToString() const
 {

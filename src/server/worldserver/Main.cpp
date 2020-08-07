@@ -62,6 +62,8 @@
 #include <boost/program_options.hpp>
 #include <csignal>
 #include <iostream>
+#include "ProcessPriority.h"
+#include "G:\Users\pedro\ElunaTrinityWotlk\src\common\Threading\ProcessPriority.h"
 
 using namespace boost::program_options;
 namespace fs = boost::filesystem;
@@ -215,7 +217,7 @@ extern int main(int argc, char** argv)
         threadPool->push_back(std::thread([ioContext]() { ioContext->run(); }));
 
     // Set process priority according to configuration settings
-    SetProcessPriority("server.worldserver", sConfigMgr->GetIntDefault(CONFIG_PROCESSOR_AFFINITY, 0), sConfigMgr->GetBoolDefault(CONFIG_HIGH_PRIORITY, false));
+    //SetProcessPriority("server.worldserver", sConfigMgr->GetIntDefault(CONFIG_PROCESSOR_AFFINITY, 0), sConfigMgr->GetBoolDefault(CONFIG_HIGH_PRIORITY, false));
 
     // Start the databases
     if (!StartDB())

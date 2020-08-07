@@ -938,6 +938,10 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         PlayerSocial* GetSocial() { return m_social; }
         void RemoveSocial();
 
+        bool m_change_map;
+        bool m_removeFromMap;
+        bool IsChangeMap() const { return m_change_map; }
+
         PlayerTaxi m_taxi;
         void InitTaxiNodesForLevel() { m_taxi.InitTaxiNodesForLevel(GetRace(), GetClass(), GetLevel()); }
         bool ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc = nullptr, uint32 spellid = 0);
@@ -2110,6 +2114,9 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         void ResetMap() override;
 
         bool isAllowedToLoot(Creature const* creature);
+        // meu bglh dnv
+
+
 
         DeclinedName const* GetDeclinedNames() const { return m_declinedname; }
         uint8 GetRunesState() const { return m_runes->runeState; }
@@ -2429,6 +2436,8 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
 
         TimeTrackerSmall m_groupUpdateTimer;
 
+
+
     private:
         // internal common parts for CanStore/StoreItem functions
         InventoryResult CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool swap, Item* pSrcItem) const;
@@ -2455,6 +2464,11 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         void ScheduleDelayedOperation(uint32 operation) { if (operation < DELAYED_END) m_DelayedOperations |= operation; }
 
         bool IsInstanceLoginGameMasterException() const;
+
+
+         // mais coisas do thread
+
+
 
         MapReference m_mapRef;
 
@@ -2506,3 +2520,4 @@ TC_GAME_API void AddItemsSetItem(Player* player, Item* item);
 TC_GAME_API void RemoveItemsSetItem(Player* player, ItemTemplate const* proto);
 
 #endif
+

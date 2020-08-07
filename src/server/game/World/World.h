@@ -221,6 +221,8 @@ enum WorldIntConfigs
     CONFIG_REALM_ZONE,
     CONFIG_STRICT_PLAYER_NAMES,
     CONFIG_STRICT_CHARTER_NAMES,
+    CONFIG_MAP_NUMTHREADS,
+    CONFIG_INTERVAL_MAP_SESSION_UPDATE,
     CONFIG_STRICT_PET_NAMES,
     CONFIG_MIN_PLAYER_NAME,
     CONFIG_MIN_CHARTER_NAME,
@@ -545,6 +547,8 @@ private:
 };
 
 typedef std::unordered_map<uint32, WorldSession*> SessionMap;
+typedef std::shared_ptr<WorldSession> WorldSessionPtr;
+
 
 struct CharacterInfo
 {
@@ -557,7 +561,6 @@ struct CharacterInfo
     ObjectGuid::LowType GuildId;
     uint32 ArenaTeamId[3];
 };
-
 /// The World
 class TC_GAME_API World
 {
@@ -850,6 +853,7 @@ class TC_GAME_API World
         // sessions that are added async
         void AddSession_(WorldSession* s);
         LockedQueue<WorldSession*> addSessQueue;
+        LockedQueue<WorldSessionPtr> addSessQueue2;
 
         // used versions
         std::string m_DBVersion;
