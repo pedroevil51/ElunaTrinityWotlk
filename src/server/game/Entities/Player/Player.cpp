@@ -22987,8 +22987,8 @@ void Player::ResetSpells(bool myClassOnly)
                 continue;
 
             // skip wrong class/race skills
-            if (!IsSpellFitByClassAndRace(spellInfo->Id))
-                continue;
+           // if (!IsSpellFitByClassAndRace(spellInfo->Id))
+             //   continue;
 
             // skip other spell families
             if (spellInfo->SpellFamilyName != family)

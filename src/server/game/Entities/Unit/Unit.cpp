@@ -5408,7 +5408,7 @@ void Unit::SetPowerType(Powers new_powertype, bool sendUpdate/* = true*/)
     // Update current power
     switch (new_powertype)
     {
-        case POWER_MANA: // Keep the same (druid form switching...)
+        case POWER_MANA: // Keep the same(druid form switching...)
         case POWER_ENERGY:
             break;
         case POWER_RAGE: // Reset to zero
@@ -5418,6 +5418,7 @@ void Unit::SetPowerType(Powers new_powertype, bool sendUpdate/* = true*/)
             SetFullPower(new_powertype);
             break;
         default:
+            SetPower(POWER_MANA, uint32(GetMaxPower(POWER_MANA)));
             break;
     }
 }
@@ -5429,23 +5430,27 @@ void Unit::UpdateDisplayPower()
     {
         case FORM_GHOUL:
         case FORM_CAT:
+            displayPower = POWER_MANA;
             displayPower = POWER_ENERGY;
             break;
         case FORM_BEAR:
+            displayPower = POWER_MANA;
+            displayPower = POWER_ENERGY;
         case FORM_DIREBEAR:
-            displayPower = POWER_RAGE;
+            displayPower = POWER_MANA;
+            displayPower = POWER_ENERGY;
             break;
         case FORM_TRAVEL:
         case FORM_GHOSTWOLF:
             displayPower = POWER_MANA;
+            displayPower = POWER_ENERGY;
             break;
         default:
         {
             if (GetTypeId() == TYPEID_PLAYER)
             {
-                ChrClassesEntry const* cEntry = sChrClassesStore.LookupEntry(GetClass());
-                if (cEntry && cEntry->powerType < MAX_POWERS)
-                    displayPower = Powers(cEntry->powerType);
+                displayPower = POWER_MANA;
+                displayPower = POWER_ENERGY;
             }
             else if (GetTypeId() == TYPEID_UNIT)
             {

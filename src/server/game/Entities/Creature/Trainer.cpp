@@ -45,8 +45,8 @@ namespace Trainer
         trainerList.Spells.reserve(_spells.size());
         for (Spell const& trainerSpell : _spells)
         {
-            if (!player->IsSpellFitByClassAndRace(trainerSpell.SpellId))
-                continue;
+            //if (!player->IsSpellFitByClassAndRace(trainerSpell.SpellId))
+              //  continue;
 
             SpellInfo const* trainerSpellInfo = sSpellMgr->AssertSpellInfo(trainerSpell.SpellId);
 
@@ -157,8 +157,8 @@ namespace Trainer
             return SpellState::Known;
 
         // check race/class requirement
-        if (!player->IsSpellFitByClassAndRace(trainerSpell->SpellId))
-            return SpellState::Unavailable;
+       // if (!player->IsSpellFitByClassAndRace(trainerSpell->SpellId))
+         //   return SpellState::Unavailable;
 
         // check skill requirement
         if (trainerSpell->ReqSkillLine && player->GetBaseSkillValue(trainerSpell->ReqSkillLine) < trainerSpell->ReqSkillRank)
