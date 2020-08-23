@@ -43,8 +43,6 @@ MapManager::MapManager()
 {
     i_gridCleanUpDelay = sWorld->getIntConfig(CONFIG_INTERVAL_GRIDCLEAN);
     i_timer.SetInterval(sWorld->getIntConfig(CONFIG_INTERVAL_MAPUPDATE));
-    _mapCount = sMapStore.GetNumRows() + 1;
-    _mapThreads.assign(_mapCount, nullptr);
 }
 
 MapManager::~MapManager() { }
@@ -101,7 +99,6 @@ Map* MapManager::CreateBaseMap(uint32 id)
         }
 
         i_maps[id] = map;
-        _mapThreads[id] = new std::thread(&Map::UpdateLoop, map, id);
     }
 
     ASSERT(map);

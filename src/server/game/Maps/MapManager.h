@@ -151,8 +151,6 @@ class TC_GAME_API MapManager
             MapMapType::const_iterator iter = i_maps.find(mapId);
             return (iter == i_maps.end() ? nullptr : iter->second);
         }
-        std::vector<std::thread*> _mapThreads;
-        uint16 _mapCount;
 
         MapManager(MapManager const&) = delete;
         MapManager& operator=(MapManager const&) = delete;

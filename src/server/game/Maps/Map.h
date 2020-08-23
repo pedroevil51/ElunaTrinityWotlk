@@ -37,9 +37,6 @@
 #include <list>
 #include <memory>
 #include <mutex>
-#include "ThreadPoolMap.hpp"
-#include "Utilities/EventProcessor.h"
-#include "LockedQueue.h"
 
 class Battleground;
 class BattlegroundMap;
@@ -341,6 +338,7 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
             m_unloadTimer -= diff;
             return false;
         }
+
         virtual bool AddPlayerToMap(Player*);
         virtual void RemovePlayerFromMap(Player*, bool);
 
@@ -463,8 +461,6 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
         bool IsBattleArena() const;
         bool IsBattlegroundOrArena() const;
         bool GetEntrancePos(int32& mapid, float& x, float& y) const;
-
-
 
         void AddObjectToRemoveList(WorldObject* obj);
         void AddObjectToSwitchList(WorldObject* obj, bool on);
@@ -603,9 +599,6 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
         void DeleteRespawnTimes() { UnloadAllRespawnInfos(); DeleteRespawnTimesInDB(GetId(), GetInstanceId()); }
         static void DeleteRespawnTimesInDB(uint16 mapId, uint32 instanceId);
 
-
-
-
         void LoadCorpseData();
         void DeleteCorpseData();
         void AddCorpse(Corpse* corpse);
@@ -649,29 +642,8 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
         {
             _updateObjects.erase(obj);
         }
-        ThreadPoolMap* threadPool;
-        void TerminateThread();
-        bool CanCreatedZone() const;
-        bool CanCreatedThread() const;
-
-
-          // teste basico ainda
-        bool b_isMapUnload;
-        bool b_isMapStop;
-        uint32 m_sessionTime;
-        uint32 m_mapLoopCounter;
-        uint32 m_updateTime;
 
         virtual std::string GetDebugInfo() const;
-
-        virtual void UpdateLoop(volatile uint32 _mapID);
-
-        
-        virtual void UpdateSessions(uint32 diff);
-       // virtual void Update(const uint32);
-
-        
-       // uint32 m_mapLoopCounter;
 
     private:
         void LoadMapAndVMap(int gx, int gy);
@@ -820,7 +792,6 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
                 DeleteRespawnInfoFromDB(type, spawnId, dbTrans);
         }
         size_t DespawnAll(SpawnObjectType type, ObjectGuid::LowType spawnId);
-        EventProcessor m_events;
 
         bool ShouldBeSpawnedOnGridLoad(SpawnObjectType type, ObjectGuid::LowType spawnId) const;
         template <typename T> bool ShouldBeSpawnedOnGridLoad(ObjectGuid::LowType spawnId) const { return ShouldBeSpawnedOnGridLoad(SpawnData::TypeFor<T>, spawnId); }
@@ -928,17 +899,8 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
         std::unordered_set<Corpse*> _corpseBones;
 
         std::unordered_set<Object*> _updateObjects;
+
         MPSCQueue<FarSpellCallback> _farSpellCallbacks;
-
-        IntervalTimer i_timer;
-        IntervalTimer i_timer_se;
-        IntervalTimer i_timer_op;
-        IntervalTimer i_timer_bp;
-        IntervalTimer i_timer_obj;
-        std::recursive_mutex i_objectLock;
-
-      //  void AddSession_(WorldSessionPtr s);
-
 };
 
 enum InstanceResetMethod

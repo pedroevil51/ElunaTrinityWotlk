@@ -44,7 +44,6 @@
 #include "Transport.h"
 #include "Vehicle.h"
 #include "VMapFactory.h"
-#include "Player.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
 #endif
@@ -53,8 +52,6 @@
 #include "World.h"
 #include <unordered_set>
 #include <vector>
-#include <World\World.cpp>
-#include "World.h"
 
 u_map_magic MapMagic        = { {'M','A','P','S'} };
 u_map_magic MapVersionMagic = { {'v','1','.','9'} };
@@ -297,125 +294,7 @@ i_scriptLock(false), _respawnCheckTimer(0)
 
     _weatherUpdateTimer.SetInterval(time_t(1 * IN_MILLISECONDS));
 
-    if (CanCreatedZone() || CanCreatedThread())
-    {
-        threadPool = new ThreadPoolMap();
-        threadPool->start(sWorld->getIntConfig(CONFIG_MAP_NUMTHREADS));
-    }
-    else
-        threadPool = nullptr;
     sScriptMgr->OnCreateMap(this);
-}
-
-bool Map::CanCreatedZone() const
-{
-    return GetId() == 99999;
-}
-
-bool Map::CanCreatedThread() const
-{
-    switch (GetId())
-    {
-        case 30:
-            return true;
-    default:
-        return true;
-    }
-    return false;
-}
-
-void Map::TerminateThread()
-{
-    if (threadPool)
-    {
-        threadPool->terminate();
-        delete threadPool;
-        threadPool = new ThreadPoolMap();
-        threadPool->start(sWorld->getIntConfig(CONFIG_MAP_NUMTHREADS));
-    }
-}
-
-void Map::UpdateLoop(volatile uint32 _mapID)
-{
-    cds::threading::Manager::attachThread();
-
-    uint32 realCurrTime = 0;
-    uint32 realPrevTime = getMSTime();
-
-    uint32 prevSleepTime = 0;
-
-    // TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Run _mapID %u thread %u", _mapID, std::this_thread::get_id());
-
-    while (!b_isMapStop)
-    {
-        //if (m_worldCrashChecker) // Crashing detected, need stop map
-        {
-            //  m_Transports.clear();
-            UnloadAll();
-            b_isMapStop = true;
-            //TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Crash _mapID %u thread %u", _mapID, std::this_thread::get_id());
-            break;
-        }
-
-        try
-        {
-            m_mapLoopCounter++;
-            uint32 slepp = sWorld->getIntConfig(CONFIG_INTERVAL_MAP_SESSION_UPDATE);
-            if (!Instanceable() && !CanCreatedZone() && !HavePlayers())
-                slepp = 1000;
-
-            realCurrTime = getMSTime();
-
-            uint32 diff = getMSTimeDiff(realPrevTime, realCurrTime);
-
-            i_timer.Update(diff);
-            i_timer_se.Update(diff);
-
-            if (i_timer_se.Passed())
-            {
-                uint32 _s = getMSTime();
-                UpdateSessions(uint32(i_timer_se.GetCurrent()));
-                m_sessionTime = GetMSTimeDiffToNow(_s);
-
-                i_timer_se.SetCurrent(0);
-            }
-
-            if (i_timer.Passed())
-            {
-                uint32 _s = getMSTime();
-                uint32 curr = uint32(i_timer.GetCurrent());
-                Update(curr);
-                DelayedUpdate(curr);
-                m_updateTime = GetMSTimeDiffToNow(_s);
-
-                i_timer.SetCurrent(0);
-            }
-
-            realPrevTime = realCurrTime;
-
-            if (diff <= slepp + prevSleepTime)
-            {
-                prevSleepTime = slepp + prevSleepTime - diff;
-                std::this_thread::sleep_for(Milliseconds(prevSleepTime));
-            }
-            else
-                prevSleepTime = 0;
-        }
-        catch (std::exception& e)
-        {
-            // sLog->outTryCatch("\n\n//==-----------------------------------------------------------------------------------------------------==//");
-          //  sLog->outTryCatch("Exception caught in Map::UpdateLoop %s _mapID %u InstanceId %u", e.what(), _mapID, i_InstanceId);
-        }
-        catch (...)
-        {
-            // sLog->outTryCatch("\n\n//==-----------------------------------------------------------------------------------------------------==//");
-          //  sLog->outTryCatch("Exception caught in Map::UpdateLoop _mapID %u InstanceId %u", _mapID, i_InstanceId);
-        }
-    }
-
-    //TC_LOG_ERROR(LOG_FILTER_WORLDSERVER, "Map::UpdateLoop Stop _mapID %u thread %u", _mapID, std::this_thread::get_id());
-
-    cds::threading::Manager::detachThread();
 }
 
 void Map::InitVisibilityDistance()
@@ -4286,7 +4165,7 @@ MapDifficulty const* Map::GetMapDifficulty() const
 
 uint32 Map::GetId() const
 {
-    return i_mapEntry->MapID;     
+    return i_mapEntry->MapID;
 }
 
 bool Map::IsRegularDifficulty() const
@@ -4939,10 +4818,3 @@ std::string InstanceMap::GetDebugInfo() const
         << "ScriptId: " << GetScriptId() << " ScriptName: " << GetScriptName();
     return sstr.str();
 }
-
-void Map::UpdateSessions(uint32 diff)
-{
-}
-
-
-
