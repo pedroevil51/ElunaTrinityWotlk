@@ -2749,6 +2749,10 @@ void SpellInfo::_LoadImmunityInfo()
                 switch (Id)
                 {
                     case 42292: // PvP trinket
+					case 122995: // Talento Medalhão
+					    mechanicImmunityMask |= IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK;
+                        immuneInfo.AuraTypeImmune.insert(SPELL_AURA_USE_NORMAL_MOVEMENT_SPEED);
+                        break;
                     case 59752: // Every Man for Himself
                         mechanicImmunityMask |= IMMUNE_TO_MOVEMENT_IMPAIRMENT_AND_LOSS_CONTROL_MASK;
                         immuneInfo.AuraTypeImmune.insert(SPELL_AURA_USE_NORMAL_MOVEMENT_SPEED);
