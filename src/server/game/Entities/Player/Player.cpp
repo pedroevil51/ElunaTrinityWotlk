@@ -5244,7 +5244,7 @@ void Player::UpdateDamageDoneMods(WeaponAttackType attackType, int32 skipEnchant
                     amount += enchantmentEntry->amount[i];
                     break;
                 case ITEM_ENCHANTMENT_TYPE_TOTEM:
-                    if (GetClass() == CLASS_SHAMAN)
+                    if (GetClass() == CLASS_DRUID)
                         amount += enchantmentEntry->amount[i] * item->GetTemplate()->Delay / 1000.0f;
                     break;
                 default:
@@ -9651,23 +9651,18 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
             switch (proto->SubClass)
             {
                 case ITEM_SUBCLASS_ARMOR_LIBRAM:
-                    if (playerClass == CLASS_PALADIN)
                         slots[0] = EQUIPMENT_SLOT_RANGED;
                     break;
                 case ITEM_SUBCLASS_ARMOR_IDOL:
-                    if (playerClass == CLASS_DRUID)
                         slots[0] = EQUIPMENT_SLOT_RANGED;
                     break;
                 case ITEM_SUBCLASS_ARMOR_TOTEM:
-                    if (playerClass == CLASS_SHAMAN)
                         slots[0] = EQUIPMENT_SLOT_RANGED;
                     break;
                 case ITEM_SUBCLASS_ARMOR_MISC:
-                    if (playerClass == CLASS_WARLOCK)
                         slots[0] = EQUIPMENT_SLOT_RANGED;
                     break;
                 case ITEM_SUBCLASS_ARMOR_SIGIL:
-                    if (playerClass == CLASS_DEATH_KNIGHT)
                         slots[0] = EQUIPMENT_SLOT_RANGED;
                     break;
             }
