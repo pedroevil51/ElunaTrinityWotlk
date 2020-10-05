@@ -257,8 +257,14 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petEntry, uint32 petnumber, bool c
             petlevel = owner->GetLevel();
 
             SetClass(CLASS_MAGE);
+            SetGender(GENDER_NONE);
+            SetSheath(SHEATH_STATE_MELEE);
+            SetByteFlag(UNIT_FIELD_BYTES_2, UNIT_BYTES_2_OFFSET_PET_FLAGS, petInfo->WasRenamed ? UNIT_CAN_BE_ABANDONED : UNIT_CAN_BE_RENAMED | UNIT_CAN_BE_ABANDONED);
+
             SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
-                                                            // this enables popup window (pet dismiss, cancel)
+            // this enables popup window (pet abandon, cancel)
+            SetMaxPower(POWER_HAPPINESS, GetCreatePowerValue(POWER_HAPPINESS));
+            SetPower(POWER_HAPPINESS, petInfo->Happiness);
             break;
         case HUNTER_PET:
             SetClass(CLASS_WARRIOR);
@@ -856,7 +862,7 @@ bool Guardian::InitStatsForLevel(uint8 petlevel)
     PetType petType = MAX_PET_TYPE;
     if (IsPet() && GetOwner()->GetTypeId() == TYPEID_PLAYER)
     {
-        if (GetOwner()->GetClass() == CLASS_WARLOCK
+        if (GetOwner()->GetClass() == CLASS_DRUID
             || GetOwner()->GetClass() == CLASS_SHAMAN        // Fire Elemental
             || GetOwner()->GetClass() == CLASS_DEATH_KNIGHT) // Risen Ghoul
         {
@@ -936,6 +942,9 @@ bool Guardian::InitStatsForLevel(uint8 petlevel)
     }
     else
         SetPowerType(POWER_MANA);
+       SetPowerType(POWER_ENERGY);
+       SetFullPower(POWER_ENERGY);
+       SetPowerType(POWER_FOCUS);
 
     // Damage
     SetBonusDamage(0);
@@ -1841,7 +1850,7 @@ bool Pet::IsPermanentPetFor(Player* owner) const
                 case CLASS_DEATH_KNIGHT:
                     return GetCreatureTemplate()->type == CREATURE_TYPE_UNDEAD;
                 default:
-                    return false;
+                    return true;
             }
         case HUNTER_PET:
             return true;
