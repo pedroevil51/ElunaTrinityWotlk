@@ -1353,30 +1353,7 @@ void Player::Update(uint32 p_time)
     //because we don't want player's ghost teleported from graveyard
     if (IsHasDelayedTeleport() && IsAlive())
         TeleportTo(m_teleport_dest, m_teleport_options);
-    // Prepatch by LordPsyan
-    // 81
-    // 82
-    // 83
-    // 84
-    // 85
-    // 86
-    // 87
-    // 88
-    // 89
-    // 90
-    // 91
-    // 92
-    // 93
-    // 94
-    // 95
-    // 96
-    // 97
-    // 98
-    // 99
-    // 100
-    // Visit http://www.realmsofwarcraft.com/bb for forums and information
-    //
-    // End of prepatch
+
 }
 
 void Player::setDeathState(DeathState s)
@@ -6884,30 +6861,6 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
     }
 
     honor_f *= sWorld->getRate(RATE_HONOR);
-    // Prepatch by LordPsyan
-    // 21
-    // 22
-    // 23
-    // 24
-    // 25
-    // 26
-    // 27
-    // 28
-    // 29
-    // 30
-    // 31
-    // 32
-    // 33
-    // 34
-    // 35
-    // 36
-    // 37
-    // 38
-    // 39
-    // 40
-    // Visit http://www.realmsofwarcraft.com/bb for forums and information
-    //
-    // End of prepatch
     // Back to int now
     honor = int32(honor_f);
     // honor - for show honor points in log
